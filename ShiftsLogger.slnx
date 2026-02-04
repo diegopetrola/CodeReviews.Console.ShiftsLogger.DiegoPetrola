@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ShiftsLogger.API/ShiftsLogger.API.csproj" Id="b1be0b62-da23-4314-946c-191e6a1bbd79" />
+  <Project Path="ShiftsLogger.UI/ShiftsLogger.UI.csproj" Id="0ede75e9-8bcd-4358-9dfc-66a0c1c71070" />
+</Solution>
