@@ -22,7 +22,7 @@ internal class MenuController(ShiftController shiftController)
         {
             (Options.StartShift) => "Start Shift",
             (Options.EndShift) => "End Shift",
-            (Options.ViewShifts) => "View Shift",
+            (Options.ViewShifts) => "View Shifts",
             _ => op.ToString(),
         };
     }

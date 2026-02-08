@@ -17,7 +17,7 @@ public static class DatabaseSeeding
         {
             Shift contact = new()
             {
-                StartTime = DateTime.Now.AddDays(Shared.Next(-10)).AddHours(Shared.Next(24)).AddMinutes(Shared.Next(60))
+                StartTime = DateTime.UtcNow.AddDays(Shared.Next(-10)).AddHours(Shared.Next(24)).AddMinutes(Shared.Next(60))
             };
             contact.EndTime = contact.StartTime.AddHours(Shared.Next(7)).AddMinutes(Shared.Next(60));
             contacts.Add(contact);

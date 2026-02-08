@@ -8,7 +8,7 @@ public static partial class Shared
     public static readonly string addNew = $"[{StyleHelper.success}] + Add New[/]";
     public static readonly string filter = $"[{StyleHelper.warning}] ~ Filter[/]";
     public static readonly string goBack = $"[{StyleHelper.subtle}]<- Go Back[/]";
-    public static readonly string dateFormat = "dd/MM/yy";
+    public static readonly string dateFormat = "dd/MM/yy HH:mm:ss";
 
     public static Panel GetStandardPanel(string bodyText, string header)
     {
@@ -16,7 +16,7 @@ public static partial class Shared
         panel.Header = new PanelHeader(header).Centered();
         panel.Border = BoxBorder.Rounded;
         panel.BorderColor(Color.Orange1);
-        panel.Padding(5, 1);
+        panel.Padding(3, 1);
         return panel;
     }
 

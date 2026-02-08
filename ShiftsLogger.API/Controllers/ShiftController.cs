@@ -19,15 +19,22 @@ public class ShiftController(IShiftService shiftService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Shift>> StartShift()
     {
-        var shift = await shiftService.StartShift();
-        return Ok(shift);
+        try
+        {
+            var shift = await shiftService.StartShift();
+            return Ok(shift);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ShiftDto>> GetShiftById(int id)
     {
         var shift = await shiftService.GetShiftById(id);
-        if (shift is null) return NotFound();
+        if (shift is null) return NotFound("Shift not found.");
 
         return Ok(shift);
     }
@@ -46,12 +53,12 @@ public class ShiftController(IShiftService shiftService) : ControllerBase
         }
     }
 
-    [HttpPut("{id}/stop")]
-    public async Task<ActionResult> StopShift(int id)
+    [HttpPut("stop")]
+    public async Task<ActionResult> StopShift()
     {
         try
         {
-            await shiftService.StopShift(id, DateTime.UtcNow);
+            await shiftService.StopShift(DateTime.UtcNow);
             return Ok();
         }
         catch (Exception e)
@@ -63,7 +70,7 @@ public class ShiftController(IShiftService shiftService) : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateShift(int id, Shift shift)
     {
-        if (id != shift.Id) return BadRequest();
+        if (id != shift.Id) return BadRequest("Invalid request.");
         try
         {
             await shiftService.UpdateShift(shift);

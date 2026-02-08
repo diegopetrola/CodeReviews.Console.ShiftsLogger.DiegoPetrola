@@ -4,9 +4,20 @@
 POST {{ShiftsLogger.API_HostAddress}}/shift
 Accept: application/json
 ###
-PUT {{ShiftsLogger.API_HostAddress}}/shift/3/stop
+PUT {{ShiftsLogger.API_HostAddress}}/shift/stop
 Accept: application/json
 ###
 GET {{ShiftsLogger.API_HostAddress}}/shift/
 Accept: application/json
+###
+PUT {{ShiftsLogger.API_HostAddress}}/shift/19
+Accept: application/json
+Content-Type: application/json
+
+
+{
+  "id": 19,
+  "startTime": "2026-02-08T10:05:01.0824376",
+  "endTime": "2026-02-08T21:05:29.0425973"
+}
 ###

@@ -13,7 +13,6 @@ public class ShiftController(ShiftService shiftService)
         Edit,
         GoBack
     }
-    private ShiftDto? currentShift = null;
 
     private string MenuOptionsToString(MenuOptions op)
     {
@@ -29,9 +28,11 @@ public class ShiftController(ShiftService shiftService)
         AnsiConsole.Clear();
         try
         {
-            if (currentShift is null) throw new Exception("Can't start a new shift when there is one in progress!");
-            currentShift = await shiftService.StartShift() ?? throw new Exception("Shift not found!");
-            await PrintShift(currentShift);
+            var shift = await shiftService.StartShift() ?? throw new Exception("Shift not found!");
+            AnsiConsole.MarkupLine($"[{StyleHelper.success}]Your shift has started.[/]\r\n");
+            AnsiConsole.MarkupLine($"[{StyleHelper.subtle}]It will keep counting even if you close the app. \r\n" +
+                $"When you are ready to finish, go to the Main Screen and select [{StyleHelper.info}]End Shift[/][/].");
+            await PrintShift(shift);
         }
         catch (Exception e)
         {
@@ -42,8 +43,17 @@ public class ShiftController(ShiftService shiftService)
 
     internal async Task EndShift()
     {
-        shiftService.EndShift()
-        currentShift = null;
+        AnsiConsole.Clear();
+        try
+        {
+            await shiftService.EndShift();
+            AnsiConsole.MarkupLine($"[{StyleHelper.success}]Your shift has ended.[/]");
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
+        }
+        Shared.AskForKey();
     }
 
     public async Task ShowAllShifts()
@@ -66,8 +76,9 @@ public class ShiftController(ShiftService shiftService)
                     .AddChoices(shifts)
                     .UseConverter(s => s.Id == -1 ?
                             Shared.goBack :
-                            $"{s.Id} - {s.StartTime:dd-MM-yyyy} -> {s.EndTime:dd-MM-yyyy} ({s.Duration:hh\\:mm\\:ss})"
-                        )
+                            $"{s.Id}- [{StyleHelper.subtle}]{s.StartTime:dd-MMM HH:mm:ss} -> {s.EndTime:dd-MMM HH:mm:ss}[/]" +
+                            $" Dur: {s.Duration:hh\\:mm\\:ss}")
+                    .PageSize(25)
                     .WrapAround(true)
                 );
 
@@ -80,10 +91,9 @@ public class ShiftController(ShiftService shiftService)
 
     public static async Task PrintShift(ShiftDto shift)
     {
-        AnsiConsole.Clear();
         var str = $"""
-            [{StyleHelper.subtle}]Start Time[/]: {shift.StartTime:dd-MM-yyyy}
-            [{StyleHelper.subtle}]End Time[/]:   {shift.EndTime:dd-MM-yyyy}
+            [{StyleHelper.subtle}]Start Time[/]: {shift.StartTime:dd-MM-yyyy HH\:mm\:ss}
+            [{StyleHelper.subtle}]End Time[/]:   {shift.EndTime:dd-MM-yyyy HH\:mm\:ss}
             [{StyleHelper.subtle}]Duration[/]:   {shift.Duration:hh\:mm\:ss}
             """;
         var panel = Shared.GetStandardPanel(str, $"ID: {shift.Id}");
@@ -92,8 +102,8 @@ public class ShiftController(ShiftService shiftService)
 
     private async Task ShowShiftDetails(ShiftDto shift)
     {
+        AnsiConsole.Clear();
         await PrintShift(shift);
-
         var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<MenuOptions>()
                 .Title("What would you like to do?")
@@ -108,11 +118,35 @@ public class ShiftController(ShiftService shiftService)
                 await DeleteShiftScreen(shift.Id);
                 break;
             case (MenuOptions.Edit):
-                await DeleteShiftScreen(shift.Id);
+                await EditShiftScreen(shift.Id);
                 break;
             default:
                 return;
         }
+    }
+
+    private async Task EditShiftScreen(int id)
+    {
+        var startDate = Shared.AskDate($"Type the new [{StyleHelper.bold}]Start Date[/] in the format {Shared.dateFormat}");
+        var endDate = Shared.AskDate($"Type the new [{StyleHelper.bold}]End Date[/] in the format {Shared.dateFormat}");
+        var shift = new ShiftDto
+        {
+            Id = id,
+            StartTime = startDate.ToUniversalTime(),
+            EndTime = endDate.ToUniversalTime(),
+            Duration = endDate - startDate
+        };
+
+        try
+        {
+            await shiftService.UpdateShift(shift);
+            AnsiConsole.MarkupLine($"[{StyleHelper.warning}]Shift updated[/]");
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
+        }
+        Shared.AskForKey();
     }
 
     private async Task DeleteShiftScreen(int id)

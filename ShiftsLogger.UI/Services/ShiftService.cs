@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using ShiftsLogger.UI.Models;
-using ShiftsLogger.UI.Utils;
-using Spectre.Console;
+﻿using ShiftsLogger.UI.Models;
 using System.Net.Http.Json;
 
 namespace ShiftsLogger.UI.Services;
@@ -9,17 +6,9 @@ namespace ShiftsLogger.UI.Services;
 public class ShiftService
 {
     private readonly HttpClient _httpClient;
-    public ShiftService()
+    public ShiftService(string apiPath)
     {
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        var path = builder["ApiPath"] ??
-            throw new Exception("Variable 'ApiPath' was not found on appsettings.json, please configure the right API path.");
-
-        _httpClient = new HttpClient { BaseAddress = new Uri(path) };
+        _httpClient = new HttpClient { BaseAddress = new Uri(apiPath) };
     }
 
     private async Task<T?> GetEndpoint<T>(string endpoint)
@@ -27,14 +16,14 @@ public class ShiftService
         try
         {
             var response = await _httpClient.GetAsync(endpoint);
-            if (!response.IsSuccessStatusCode) return default;
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(response.Content.ToString());
 
             return await response.Content.ReadFromJsonAsync<T>();
         }
         catch (Exception e)
         {
-            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
-            return default;
+            throw new Exception(e.Message);
         }
     }
 
@@ -44,47 +33,34 @@ public class ShiftService
         return result ?? [];
     }
 
-    public async Task<ShiftDto?> StartShift()
+    public async Task<ShiftDto> StartShift()
     {
-        try
-        {
-            var response = await _httpClient.PostAsJsonAsync("shift", new { });
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<ShiftDto>();
-        }
-        catch (Exception e)
-        {
-            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
-        }
-        return null;
+        var response = await _httpClient.PostAsJsonAsync("shift", new { });
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<ShiftDto>()
+                ?? throw new Exception("No response from the server, please try again later.");
+        else
+            throw new Exception(await response.Content.ReadAsStringAsync());
     }
 
-    public async Task<ShiftDto?> EndShift(int id)
+    public async Task EndShift()
     {
-        try
-        {
-            var response = await _httpClient.PutAsync($"shift/{id}/stop", new StringContent(""));
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<ShiftDto>();
-        }
-        catch (Exception e)
-        {
-            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
-        }
-        return null;
-    }
-
-    private async Task<ShiftDto?> GetShiftById(int id)
-    {
-        return await GetEndpoint<ShiftDto>($"/shift/{id}");
+        var response = await _httpClient.PutAsync($"shift/stop", new StringContent(""));
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(await response.Content.ReadAsStringAsync());
     }
 
     public async Task DeleteShift(int id)
     {
         var response = await _httpClient.DeleteAsync($"/shift/{id}");
         if (!response.IsSuccessStatusCode)
-        {
             throw new Exception("Request unsuccessful, please try again later.");
-        }
+    }
+
+    public async Task UpdateShift(ShiftDto shift)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"shift/{shift.Id}", shift);
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(await response.Content.ReadAsStringAsync());
     }
 }
