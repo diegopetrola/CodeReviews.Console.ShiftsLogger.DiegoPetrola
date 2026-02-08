@@ -1,6 +1,12 @@
 @ShiftsLogger.API_HostAddress = http://localhost:5111
 
-GET {{ShiftsLogger.API_HostAddress}}/weatherforecast/
+###
+POST {{ShiftsLogger.API_HostAddress}}/shift
 Accept: application/json
-
+###
+PUT {{ShiftsLogger.API_HostAddress}}/shift/3/stop
+Accept: application/json
+###
+GET {{ShiftsLogger.API_HostAddress}}/shift/
+Accept: application/json
 ###

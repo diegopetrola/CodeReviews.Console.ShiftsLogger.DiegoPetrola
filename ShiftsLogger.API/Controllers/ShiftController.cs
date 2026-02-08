@@ -9,18 +9,18 @@ namespace ShiftsLogger.API.Controllers;
 [Route("[controller]")]
 public class ShiftController(IShiftService shiftService) : ControllerBase
 {
-    [HttpPost]
-    public async Task<ActionResult<Shift>> StartShift()
-    {
-        var shift = await shiftService.StartShift();
-        return Ok(shift);
-    }
-
     [HttpGet]
     public async Task<ActionResult<List<ShiftDto>>> GetAllShifts()
     {
         var shifts = await shiftService.GetAllShifts();
         return Ok(shifts);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Shift>> StartShift()
+    {
+        var shift = await shiftService.StartShift();
+        return Ok(shift);
     }
 
     [HttpGet("{id}")]

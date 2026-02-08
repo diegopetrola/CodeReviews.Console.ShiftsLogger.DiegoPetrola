@@ -24,6 +24,7 @@ public class ShiftService(ShiftsLoggerContext dbContext) : IShiftService
     public async Task StopShift(int id, DateTime endTime)
     {
         var shift = await dbContext.Shifts.FindAsync(id) ?? throw new Exception("Shift not found.");
+        if (shift.EndTime.HasValue) throw new Exception("Shift already ended.");
         shift.EndTime = endTime;
         await dbContext.SaveChangesAsync();
     }

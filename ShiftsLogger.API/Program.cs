@@ -8,9 +8,12 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddDbContext<ShiftsLoggerContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .UseAsyncSeeding(async (context, _, CancellationToken) =>
+        {
+            await DatabaseSeeding.CustomSeeding((ShiftsLoggerContext)context);
+        })
     );
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
