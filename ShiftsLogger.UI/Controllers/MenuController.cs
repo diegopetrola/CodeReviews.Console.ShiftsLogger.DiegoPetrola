@@ -49,6 +49,9 @@ internal class MenuController(ShiftController shiftController)
                 case (Options.StartShift):
                     await shiftController.StartShift();
                     break;
+                case (Options.EndShift):
+                    await shiftController.EndShift();
+                    break;
                 default:
                     Environment.Exit(0);
                     break;

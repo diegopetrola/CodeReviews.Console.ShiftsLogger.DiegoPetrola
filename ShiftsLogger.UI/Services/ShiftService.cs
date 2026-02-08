@@ -44,7 +44,7 @@ public class ShiftService
         return result ?? [];
     }
 
-    public async Task<ShiftDto?> StartShiftAsync()
+    public async Task<ShiftDto?> StartShift()
     {
         try
         {
@@ -57,5 +57,34 @@ public class ShiftService
             AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
         }
         return null;
+    }
+
+    public async Task<ShiftDto?> EndShift(int id)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsync($"shift/{id}/stop", new StringContent(""));
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<ShiftDto>();
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLine($"[{StyleHelper.error}]{e.Message}[/]");
+        }
+        return null;
+    }
+
+    private async Task<ShiftDto?> GetShiftById(int id)
+    {
+        return await GetEndpoint<ShiftDto>($"/shift/{id}");
+    }
+
+    public async Task DeleteShift(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"/shift/{id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Request unsuccessful, please try again later.");
+        }
     }
 }
