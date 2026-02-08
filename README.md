@@ -1,6 +1,6 @@
 # Shifts Logger
 
-![Main Menu](./imgs/)
+![Main Menu](./imgs/main_menu.jpg)
 
 A full-stack C# application designed to track worker shifts. This project demonstrates a separation of concerns by splitting the solution into a **RESTful Web API** backend and a **Console-based User Interface** frontend. This is a project for the [C# Academy](https://www.thecsharpacademy.com/project/17/shifts-logger).
 
