@@ -31,7 +31,7 @@ public class ShiftController(ShiftService shiftService)
             var shift = await shiftService.StartShift() ?? throw new Exception("Shift not found!");
             AnsiConsole.MarkupLine($"[{StyleHelper.success}]Your shift has started.[/]\r\n");
             AnsiConsole.MarkupLine($"[{StyleHelper.subtle}]It will keep counting even if you close the app. \r\n" +
-                $"When you are ready to finish, go to the Main Screen and select [{StyleHelper.info}]End Shift[/][/].");
+                $"When you are ready to finish, go to the Main Screen and select [{StyleHelper.info}]End Shift[/][/]\r\n.");
             await PrintShift(shift);
         }
         catch (Exception e)
@@ -118,20 +118,26 @@ public class ShiftController(ShiftService shiftService)
                 await DeleteShiftScreen(shift.Id);
                 break;
             case (MenuOptions.Edit):
-                await EditShiftScreen(shift.Id);
+                await EditShiftScreen(shift);
                 break;
             default:
                 return;
         }
     }
 
-    private async Task EditShiftScreen(int id)
+    private async Task EditShiftScreen(ShiftDto shift)
     {
-        var startDate = Shared.AskDate($"Type the new [{StyleHelper.bold}]Start Date[/] in the format {Shared.dateFormat}");
-        var endDate = Shared.AskDate($"Type the new [{StyleHelper.bold}]End Date[/] in the format {Shared.dateFormat}");
-        var shift = new ShiftDto
+        var startDate = Shared.AskDate(
+            $"Type the new [{StyleHelper.bold}]Start Date[/] in the format {Shared.dateFormat}, leave empty for no change: ",
+            shift.StartTime);
+
+        var endDate = Shared.AskDate(
+            $"Type the new [{StyleHelper.bold}]End Date[/] in the format {Shared.dateFormat}, leave empty for no change: ",
+             shift.EndTime);
+
+        shift = new ShiftDto
         {
-            Id = id,
+            Id = shift.Id,
             StartTime = startDate.ToUniversalTime(),
             EndTime = endDate.ToUniversalTime(),
             Duration = endDate - startDate

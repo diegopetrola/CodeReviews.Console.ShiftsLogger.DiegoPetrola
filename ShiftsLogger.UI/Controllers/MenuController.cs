@@ -17,7 +17,6 @@ internal class MenuController(ShiftController shiftController)
 
     private string OptionsToString(Options op)
     {
-        //Color.Chartreuse1
         return op switch
         {
             (Options.StartShift) => "Start Shift",

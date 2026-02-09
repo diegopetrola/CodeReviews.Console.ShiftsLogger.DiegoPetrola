@@ -38,14 +38,19 @@ public static partial class Shared
         return isValid;
     }
 
-    public static DateTime AskDate(string message)
+    public static DateTime AskDate(string message, DateTime? defaultDate)
     {
         var date = DateTime.Now;
-        AnsiConsole.Prompt(new TextPrompt<string>(message)
+        var prompt = new TextPrompt<string>(message)
             .Validate(input =>
                 ValidateStringDate(input, out date) ?
-                ValidationResult.Success() : ValidationResult.Error($"Invalid date! (format:{dateFormat}")));
+                ValidationResult.Success() : ValidationResult.Error($"Invalid date! (format:{dateFormat})"));
 
+        if (defaultDate is not null)
+            prompt.DefaultValue(defaultDate.Value.ToString(dateFormat))
+                .ShowDefaultValue(false);
+
+        AnsiConsole.Prompt(prompt);
         return date;
     }
 }

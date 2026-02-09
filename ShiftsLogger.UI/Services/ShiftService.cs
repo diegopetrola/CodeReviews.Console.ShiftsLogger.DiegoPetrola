@@ -52,7 +52,7 @@ public class ShiftService
 
     public async Task DeleteShift(int id)
     {
-        var response = await _httpClient.DeleteAsync($"/shift/{id}");
+        var response = await _httpClient.DeleteAsync($"shift/{id}");
         if (!response.IsSuccessStatusCode)
             throw new Exception("Request unsuccessful, please try again later.");
     }

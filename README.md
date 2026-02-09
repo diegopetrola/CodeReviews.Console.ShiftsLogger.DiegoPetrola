@@ -42,37 +42,17 @@ The solution is divided into two main projects:
 - .NET SDK
 - SQL Server (or LocalDB)
 
-### 1. Setting up the API (Backend)
+### Running the Project
 
-1.  Navigate to the API project folder.
-2.  Open `appsettings.json` and ensure the **Connection String** matches your SQL Server instance.
-    ```json
-    "ConnectionStrings": {
-      "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ShiftsLoggerDB;Trusted_Connection=True;TrustServerCertificate=True;"
-    }
-    ```
-3.  Apply the migrations to create the database:
-    ```bash
-    dotnet ef database update
-    ```
-4.  Run the API:
-    ```bash
-    dotnet run
-    ```
+To run the project to the following:
 
-### 2. Setting up the UI (Frontend)
+- Restore dependencies, on PowerShell `Restore` 
+- Update the database `Update-Database`
+- Run the project, on Visual Studio press `F5`.
 
-1.  Navigate to the UI project folder.
-2.  Open `appsettings.json` and configure the **API Path** to match the URL from the previous step:
-    ```json
-    {
-      "ApiPath": "https://localhost:5111/"
-    }
-    ```
-3.  Run the application:
-    ```bash
-    dotnet run
-    ```
+The project runs at `http://localhost:5111` by default. You can change this by modifying
+both `lauchSettings.json` in the **API** project and the
+`appsettings.json` in the **UI** project.
 
 ## Usage
 

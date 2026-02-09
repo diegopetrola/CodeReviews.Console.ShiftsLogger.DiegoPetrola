@@ -8,11 +8,10 @@ var builder = new ConfigurationBuilder()
     .Build();
 
 string apiPath = builder["ApiPath"]
-    ?? throw new Exception("Variable 'ApiPath' was not found on appsettings.json, please configure the right API path."); ;
+    ?? throw new Exception("Variable 'ApiPath' was not found on appsettings.json, please configure the right API path.");
 
 var shiftService = new ShiftService(apiPath);
 var shiftController = new ShiftController(shiftService);
 var controller = new MenuController(shiftController);
 
 await controller.ShowMenu();
-
