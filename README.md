@@ -7,7 +7,6 @@ A full-stack C# application designed to track worker shifts. This project demons
 ## Features
 
 - **Start/Stop Shifts:** Real-time clock-in and clock-out functionality.
-- **Duration Calculation:** Automatically calculates the duration of completed shifts.
 - **CRUD Operations:** View history, update shift details, and delete entries.
 - **Modern UI:** Uses `Spectre.Console` for an interactive and visually appealing command-line interface.
 - **Data Persistence:** Stores data using SQL Server and Entity Framework Core.
@@ -17,30 +16,17 @@ A full-stack C# application designed to track worker shifts. This project demons
 
 - **.NET 9**
 - **ASP.NET Core Web API**
-- **Entity Framework Core** (Code-First Approach)
-- **SQL Server** (LocalDB)
-- **Spectre.Console** (UI Library)
-- **HttpClient** (API Consumption)
-
-## Project Structure
-
-The solution is divided into two main projects:
-
-1.  **ShiftsLogger.API**: Handles database connections, business logic, and exposes endpoints.
-    - _Controllers_: Manage HTTP requests.
-    - _Services_: Handle business logic (e.g., ensuring you can't start a shift if one is already open).
-    - _Context_: EF Core database context and seeding.
-2.  **ShiftsLogger.UI**: A console application that acts as the client.
-    - _Services_: Handles HTTP communication with the API.
-    - _Controllers_: Manages the UI flow and user input.
-    - _Models_: DTOs for data transfer.
+- **Entity Framework Core**
+- **SQL Server**
+- **Spectre.Console**
+- **HttpClient**
 
 ## Getting Started
 
 ### Prerequisites
 
 - .NET SDK
-- SQL Server (or LocalDB)
+- SQL Server (LocalDB)
 
 ### Running the Project
 
